@@ -131,9 +131,9 @@ function planLines() {
 
 function copyText() {
   const r = readable();
-  const out = ['Our First Meeting — Her Version', ''];
+  const out = ["Our First Meeting — Omosalewa's Version", 'Prepared for Kolabdul', ''];
   const add = (k, v) => { const s = Array.isArray(v) ? v.join(', ') : v; if (s) out.push(`${k}: ${s}`); };
-  add('Called', r.name); add('Mood', r.mood); add('Mood (own words)', r.moodCustom);
+  if (r.name && r.name.toLowerCase() !== 'omosalewa') add('Also known as', r.name); add('Mood', r.mood); add('Mood (own words)', r.moodCustom);
   add('Setting', r.setting); add('Setting (own words)', r.settingCustom); add('Pace', r.pace);
   add('Conversation', r.conversation); add('Own topic', r.conversationCustom);
   Object.entries(r.details).forEach(([k, v]) => add(k, v));
@@ -549,10 +549,10 @@ function buildPdf() {
   const newPage = () => { if (ops.length) pages.push(ops.join('\n')); ops = []; y = TOP; };
   const text = (font, size, x, s) => ops.push(`BT /${font} ${size} Tf ${x} ${y} Td (${pdfEsc(ascii(s))}) Tj ET`);
   newPage();
-  text('F2', 24, M, 'Our First Meeting'); y -= 22;
-  text('F3', 14, M, 'Her version' + (r.name ? ' - ' + r.name : '')); y -= 18;
+  text('F2', 26, M, 'Our First Meeting'); y -= 26;
+  text('F3', 16, M, "Omosalewa's version" + (r.name && r.name.toLowerCase() !== 'omosalewa' ? ' (a.k.a. ' + r.name + ')' : '')); y -= 20;
   const when = new Date(S.submitted ? S.submitted.at : Date.now());
-  text('F1', 10, M, 'Submitted ' + when.toLocaleString()); y -= 10;
+  text('F1', 10, M, 'Drafted by Omosalewa for Kolabdul, ' + when.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) + ' at ' + when.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })); y -= 10;
   ops.push(`0.6 w ${M} ${y} m ${W - M} ${y} l S`); y -= 26;
   items.forEach((it) => {
     const lines = wrap(ascii(it.text), 86);
@@ -561,7 +561,11 @@ function buildPdf() {
     lines.forEach((l) => { if (y < BOT) newPage(); text('F1', 12, M, l); y -= 15; });
     y -= 10;
   });
-  y = Math.max(y, BOT) - 6;
+  if (y < BOT + 30) newPage();
+  y -= 6;
+  ops.push(`0.4 w ${M} ${y} m ${W - M} ${y} l S`); y -= 20;
+  text('F3', 12, M, 'No contracts. Just what would make it feel good.'); y -= 16;
+  text('F3', 12, M, "Kolabdul takes it from here. Let's see.");
   pages.push(ops.join('\n'));
 
   const objs = [];
