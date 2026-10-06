@@ -27,10 +27,22 @@ const PUBLIC_DIR = path.join(__dirname, 'public');
 const ADMIN_DIR = path.join(__dirname, 'admin');
 
 // Storage: Upstash Redis (needed on Vercel) when configured, otherwise a local JSON file.
-const REDIS_URL = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL || '';
-const REDIS_TOKEN = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN || '';
+// Accept the Upstash variables under any prefix the Vercel integration may have used
+// (KV_REST_API_URL, UPSTASH_REDIS_REST_URL, STORAGE_KV_REST_API_URL, ...).
+function findRedisEnv() {
+  for (const [k, v] of Object.entries(process.env)) {
+    const m = k.match(/^(.*?)(KV_REST_API_URL|UPSTASH_REDIS_REST_URL)$/);
+    if (m && v) {
+      const tokenKey = k.replace(/URL$/, 'TOKEN');
+      if (process.env[tokenKey]) return [v, process.env[tokenKey]];
+    }
+  }
+  return ['', ''];
+}
+const [REDIS_URL, REDIS_TOKEN] = findRedisEnv();
 const REDIS_KEY = 'lets-see:responses';
 const useRedis = !!(REDIS_URL && REDIS_TOKEN);
+const NO_STORAGE = !!process.env.VERCEL && !useRedis;
 
 async function redis(cmd) {
   const r = await fetch(REDIS_URL, {
@@ -194,6 +206,11 @@ async function handle(req, res) {
   const url = new URL(req.url, 'http://x');
   const p = url.searchParams.get('__route') || decodeURIComponent(url.pathname);
 
+  if (NO_STORAGE && (p === '/api/submit' || p === '/api/followup' || p === '/admin/api/responses')) {
+    console.error('Storage not configured: connect an Upstash Redis database to this Vercel project.');
+    return json(res, 503, { error: 'storage not configured' });
+  }
+
   if (req.method === 'POST' && p === '/api/submit') {
     if (limited(req)) return json(res, 429, { error: 'slow down' });
     let body;
@@ -251,7 +268,7 @@ async function handle(req, res) {
 }
 
 const app = (req, res) => {
-  handle(req, res).catch((e) => { console.error(e); if (!res.headersSent) json(res, 500, { error: 'server error' }); });
+  handle(req, res).catch((e) => { console.error('handler error:', e && e.stack || e); if (!res.headersSent) json(res, 500, { error: 'server error' }); });
 };
 module.exports = app;
 
