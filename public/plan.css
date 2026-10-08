@@ -73,3 +73,4 @@ section{scroll-margin-top:24px}
 .tracks a:hover{padding-left:12px;background:rgba(255,253,247,.7)}
 .tracks b{font-weight:400;font-size:22px}
 .tracks span{font-style:italic;color:var(--soft);margin-left:auto}
+.photo img{object-position:50% 38%}
