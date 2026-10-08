@@ -2,8 +2,8 @@
 'use strict';
 
 /* ---- edit these if the plan changes -------------------------------------
-   Times are Lagos time (WAT, UTC+1). Dinner starts 19:00 on 9 Oct 2026. */
-const DINNER_UTC = Date.UTC(2026, 9, 9, 18, 0);   // 19:00 WAT
+   Times are Lagos time (WAT, UTC+1). Dinner starts 20:00 on 9 Oct 2026. */
+const DINNER_UTC = Date.UTC(2026, 9, 9, 19, 0);   // 20:00 WAT
 const NIGHT_END_UTC = Date.UTC(2026, 9, 10, 0, 0); // 01:00 WAT, calendar end
 // Paste a Spotify playlist link here and an "Open the playlist" button appears.
 const PLAYLIST_URL = 'https://open.spotify.com/playlist/4tyfKoyfOdXoKdBu00uOtt?si=Z1PYbfCTS06jyGfCJkRF7g&pi=-7jMPdJzQuWKv&pt=da829be68d6a2d10b7406d71fdb45b9d';
@@ -76,7 +76,7 @@ $('#ics').addEventListener('click', () => {
     'DTSTART:' + f(DINNER_UTC), 'DTEND:' + f(NIGHT_END_UTC),
     'SUMMARY:Dinner at Nomaada, then The Mad House',
     "LOCATION:Nomaada\\, 4B Musa Yar'Adua Street\\, Victoria Island\\, Lagos",
-    'DESCRIPTION:7:00 PM dinner at Nomaada. ~9:45 PM walk (about 10 min) to The Mad House\\, Casa 45\\, 35 Adeola Odeku\\, VI. Let\'s see.',
+    'DESCRIPTION:8:00 PM dinner at Nomaada. ~9:45 PM walk (about 10 min) to The Mad House\\, Casa 45\\, 35 Adeola Odeku\\, VI. Let\'s see.',
     'END:VEVENT', 'END:VCALENDAR',
   ].join('\r\n');
   const a = document.createElement('a');
