@@ -6,6 +6,7 @@ function rows(r) {
     const val = Array.isArray(v) ? v.join(', ') : v;
     if (val) out.push([k, val]);
   };
+  if (r.planReply) add('Plan reply', [r.planReply.choice, r.planReply.text].filter(Boolean).join(' — '));
   add('Name', r.name);
   add('Mood', r.mood); add('Mood (own)', r.moodCustom);
   add('Setting', r.setting); add('Setting (own)', r.settingCustom);
@@ -35,6 +36,7 @@ function render() {
     const a = document.createElement('article');
     const h = document.createElement('h2');
     h.textContent = 'Submitted: ' + new Date(r.submittedAt).toLocaleString();
+    if (r.planReply) { const t = document.createElement('span'); t.className = 'tag'; t.textContent = 'reply to the plan'; h.appendChild(t); }
     if (r.notReady) { const t = document.createElement('span'); t.className = 'tag'; t.textContent = 'not ready yet'; h.appendChild(t); }
     a.appendChild(h);
     const dl = document.createElement('dl');

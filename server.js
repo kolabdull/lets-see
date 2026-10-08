@@ -87,7 +87,7 @@ const SECURITY = {
   'Referrer-Policy': 'no-referrer',
   'X-Frame-Options': 'DENY',
   'Content-Security-Policy':
-    "default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; script-src 'self'",
+    "default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-src https://www.google.com; script-src 'self'",
 };
 function send(res, code, body, headers = {}) {
   res.writeHead(code, { ...SECURITY, ...headers });
@@ -145,6 +145,7 @@ function limited(req) {
 function toText(r) {
   const L = [];
   L.push(`Submitted: ${r.submittedAt}`);
+  if (r.planReply) L.push(`PLAN REPLY: ${r.planReply.choice}${r.planReply.text ? ' - ' + r.planReply.text : ''}`);
   if (r.notReady) L.push('STATUS: Not ready yet (she chose the quiet option).');
   if (r.name) L.push(`Name: ${r.name}`);
   const row = (k, v) => { if (v && (!Array.isArray(v) || v.length)) L.push(`${k}: ${Array.isArray(v) ? v.join(', ') : v}`); };
@@ -237,6 +238,17 @@ async function handle(req, res) {
     return json(res, 200, { ok: true });
   }
 
+  if (req.method === 'POST' && p === '/api/planreply') {
+    if (limited(req)) return json(res, 429, { error: 'slow down' });
+    let body;
+    try { body = JSON.parse(await readBody(req, 20 * 1024)); } catch { return json(res, 400, { error: 'bad request' }); }
+    const rec = { id: crypto.randomUUID(), submittedAt: new Date().toISOString(), planReply: { choice: str(body.choice, 200), text: str(body.text, 3000) } };
+    if (!rec.planReply.choice) return json(res, 400, { error: 'bad request' });
+    await withStore((l) => { l.push(rec); });
+    await notify(rec);
+    return json(res, 200, { ok: true });
+  }
+
   if (p === '/admin' || p.startsWith('/admin/')) {
     if (!adminAuth(req, res)) return;
     if (p === '/admin/api/responses' && req.method === 'GET') {
@@ -256,7 +268,8 @@ async function handle(req, res) {
   }
 
   if (req.method !== 'GET' && req.method !== 'HEAD') return send(res, 405, 'Method not allowed');
-  const rel = p === '/' ? 'index.html' : p.replace(/^\/+/, '');
+  let rel = p === '/' ? 'index.html' : p.replace(/^\/+/, '');
+  if (!path.extname(rel)) rel += '.html';
   const file = path.normalize(path.join(PUBLIC_DIR, rel));
   if (!file.startsWith(PUBLIC_DIR + path.sep)) return send(res, 403, 'Forbidden');
   try {

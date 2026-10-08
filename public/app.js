@@ -329,6 +329,7 @@ const SCREENS = {
           <button class="btn ghost" data-action="pdf">Download my plan</button>
         </div>
       </div>
+      <div class="row" style="margin-top:32px"><a class="btn solid" href="/plan">I've drafted something. Have a look →</a></div>
       <div class="row"><button class="link" data-action="restart">Start again</button></div>
     </section>`;
   },

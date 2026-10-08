@@ -1,9 +1,30 @@
 {
   "rewrites": [
-    { "source": "/api/submit", "destination": "/api/index?__route=/api/submit" },
-    { "source": "/api/followup", "destination": "/api/index?__route=/api/followup" },
-    { "source": "/admin", "destination": "/api/index?__route=/admin" },
-    { "source": "/admin/:path*", "destination": "/api/index?__route=/admin/:path*" }
+    {
+      "source": "/api/submit",
+      "destination": "/api/index?__route=/api/submit"
+    },
+    {
+      "source": "/api/followup",
+      "destination": "/api/index?__route=/api/followup"
+    },
+    {
+      "source": "/api/planreply",
+      "destination": "/api/index?__route=/api/planreply"
+    },
+    {
+      "source": "/admin",
+      "destination": "/api/index?__route=/admin"
+    },
+    {
+      "source": "/admin/:path*",
+      "destination": "/api/index?__route=/admin/:path*"
+    }
   ],
-  "functions": { "api/index.js": { "includeFiles": "admin/**" } }
+  "functions": {
+    "api/index.js": {
+      "includeFiles": "admin/**"
+    }
+  },
+  "cleanUrls": true
 }

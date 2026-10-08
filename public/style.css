@@ -134,3 +134,5 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
 /* fixes: honour [hidden]; keep focused/scrolled controls clear of the sticky bar */
 [hidden]{display:none!important}
 .card,.chip,textarea,input,.btn,.altlink{scroll-margin-top:90px;scroll-margin-bottom:130px}
+
+a.btn{display:inline-block;text-decoration:none;text-align:center;line-height:1.2}
