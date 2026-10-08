@@ -5,6 +5,9 @@
    Times are Lagos time (WAT, UTC+1). Dinner starts 19:00 on 9 Oct 2026. */
 const DINNER_UTC = Date.UTC(2026, 9, 9, 18, 0);   // 19:00 WAT
 const NIGHT_END_UTC = Date.UTC(2026, 9, 10, 0, 0); // 01:00 WAT, calendar end
+// Paste a Spotify playlist link here and an "Open the playlist" button appears.
+const PLAYLIST_URL = '';
+// Drop a photo at public/nomaada.jpg and it appears above the dinner map.
 const QUESTIONS = [
   'What are you reading right now that you would defend in an argument?',
   'What is the best thing you have ever researched purely out of curiosity?',
@@ -22,6 +25,12 @@ const QUESTIONS = [
 /* ------------------------------------------------------------------------ */
 
 const $ = (s) => document.querySelector(s);
+
+/* optional extras */
+if (PLAYLIST_URL) { $('#plBtn').href = PLAYLIST_URL; $('#plRow').hidden = false; }
+const ph = $('#nomaadaImg');
+ph.addEventListener('load', () => { $('#nomaadaPhoto').hidden = false; });
+ph.src = '/nomaada.jpg';
 
 /* scroll reveal */
 const io = 'IntersectionObserver' in window
