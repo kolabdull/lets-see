@@ -67,7 +67,20 @@ $('#draw').addEventListener('click', () => {
   $('#draw').textContent = 'Draw another';
 });
 
-/* calendar file */
+/* Google Calendar: a prefilled "new event" link. No API keys; she taps Save. */
+{
+  const g = (t) => new Date(t).toISOString().slice(0, 19).replace(/[-:]/g, '') + 'Z';
+  const q = new URLSearchParams({
+    action: 'TEMPLATE',
+    text: 'Dinner at Nomaada, then The Mad House',
+    dates: g(DINNER_UTC) + '/' + g(NIGHT_END_UTC),
+    location: "Nomaada, 4B Musa Yar'Adua Street, Victoria Island, Lagos",
+    details: "8:00 PM dinner at Nomaada (table under Kolawole Temitope). ~9:45 PM walk (about 10 min) to The Mad House, Casa 45, 35 Adeola Odeku, VI. Let's see.",
+  });
+  $('#gcal').href = 'https://calendar.google.com/calendar/render?' + q;
+}
+
+/* calendar file (Apple / Outlook) */
 $('#ics').addEventListener('click', () => {
   const f = (t) => new Date(t).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
   const ics = [
